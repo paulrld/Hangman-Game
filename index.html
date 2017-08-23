@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Rock Paper Scissors Part 2
+  <title>Hangman
   </title>
 </head>
 
@@ -12,11 +12,11 @@
   <div class="row">
     <div class="col-md-offset-2 col-md-8">
       <div class="jumbotron">
-        <h1>The Psychic Game</h1>
-        <p>Guess what letter I'm thinking of</p>
+        <h1>Hangman Game</h1>
+        <p>Guess the word!</p>
         <p>wins: <span id="wins-text">0</span></p>
         <p>losses: <span id="losses-text">0</span></p>
-        <p>Guesses Left: <span id="guesses-text">9</span></p>
+        <p>Guesses Left: <span id="guesses-text">12</span></p>
         <p>Your Guesses so far: <span id="user-text"></span></p>
         <p>dont look! lol computer chose: <span id="computer-text"><strong>nothing</strong></span></p>
         <p>Guess the word:<span id="word-guess-text"></span></p>
@@ -37,8 +37,8 @@
     var wins = 0;
     var lost = 0;
     var tie = 0;
-    var numberOfGuesses = 9;
-
+    var numberOfGuesses = 12;
+    var lastInput="_";
     //set stuff for displaying document
     var userText = document.getElementById("user-text");
     var computerText = document.getElementById("computer-text");
@@ -50,6 +50,11 @@
 
 //FUNCTIONS==========================================
     //Test each input exist in the array
+    function checkRepeatedInput(value) {
+      repeatedInput = value !== lastInput; 
+      lastInput = value;//updated lastInput
+      return repeatedInput;
+    }
     function checkValidInput (someArray,value) {
       return someArray.includes(value);
     }
@@ -73,23 +78,25 @@
     function setBlanksOfWord(someWord) {
       var blank = "_ ";
       /*      wordguessText.textContent = blank.repeat(someWord.length);*/
+      wordguessText.innerHTML = "";//clear innerHTML clears all chldren of span
       for (var i = 0; i <   someWord.length; i++) {
         var spanCreate = document.createElement("span");
           spanCreate.innerHTML = "_ ";
           wordguessText.append(spanCreate);
       }
+      return new Array(someWord.length);
     }
-
+    var wordBlanks = setBlanksOfWord(computerGuess);
     function replaceBlanksOfWord(someLetter,arrayOfIndicies) {
       
       for (var i = 0; i <   arrayOfIndicies.length; i++) {
           var spanCreate = document.createElement("span");
           spanCreate.innerHTML = someLetter + " ";
           wordguessText.replaceChild(spanCreate,wordguessText.childNodes[arrayOfIndicies[i]])
-
+          wordBlanks[arrayOfIndicies[i]]=someLetter;
       }
     }
-    var wordBlanks = setBlanksOfWord(computerGuess);
+    
     /*wordguessText.textContent = wordBlanks;*/
     // This function is run whenever the user presses a key.
     document.onkeyup = function(event) {
@@ -97,7 +104,8 @@
       // Determines which key was pressed.
       var userGuess = event.key;
 
-      if (checkValidInput(alphabet,userGuess)) {
+
+      if (checkValidInput(alphabet,userGuess) && checkRepeatedInput(userGuess)) {
         userChoices.push(userGuess);
         //decrease number of user guesses by 1
         numberOfGuesses= numberOfGuesses-1;
@@ -121,11 +129,14 @@
             console.log(letterIndicies)
             replaceBlanksOfWord(userGuess,letterIndicies);
           }
-          if(userGuess == computerGuess) {
+          //if user guess all the write letters user wins
+          if(wordBlanks.join("") === computerGuess) {
             console.log("user wins!");
             wins = wins + 1;
             numberOfGuesses = 9;
             computerGuess = randomizeSelection(computerChoices);
+            wordBlanks = setBlanksOfWord(computerGuess);
+
             userChoices = [];//clear array of userChoices
           }
           else {
@@ -138,6 +149,7 @@
             lost = lost + 1;
             numberOfGuesses = 9;
             computerGuess = randomizeSelection(computerChoices);
+            wordBlanks = setBlanksOfWord(computerGuess);
             console.log(numberOfGuesses)
             userChoices = [];//clear array of userChoices
           }
