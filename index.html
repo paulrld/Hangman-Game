@@ -37,7 +37,9 @@
     var wins = 0;
     var lost = 0;
     var tie = 0;
-    var numberOfGuesses = 12;
+    var defaultGuesses = 12
+    var numberOfGuesses = defaultGuesses;
+
     var lastInput="_";
     //set stuff for displaying document
     var userText = document.getElementById("user-text");
@@ -133,7 +135,7 @@
           if(wordBlanks.join("") === computerGuess) {
             console.log("user wins!");
             wins = wins + 1;
-            numberOfGuesses = 9;
+            numberOfGuesses = defaultGuesses;
             computerGuess = randomizeSelection(computerChoices);
             wordBlanks = setBlanksOfWord(computerGuess);
 
@@ -147,7 +149,7 @@
           // select new computer guess
           if(numberOfGuesses==0) {
             lost = lost + 1;
-            numberOfGuesses = 9;
+            numberOfGuesses = defaultGuesses;
             computerGuess = randomizeSelection(computerChoices);
             wordBlanks = setBlanksOfWord(computerGuess);
             console.log(numberOfGuesses)
