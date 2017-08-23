@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Rock Paper Scissors Part 2
+  </title>
+</head>
+
+<body>
+ <div class="container">
+  <div class="row">
+    <div class="col-md-offset-2 col-md-8">
+      <div class="jumbotron">
+        <h1>The Psychic Game</h1>
+        <p>Guess what letter I'm thinking of</p>
+        <p>wins: <span id="wins-text">0</span></p>
+        <p>losses: <span id="losses-text">0</span></p>
+        <p>Guesses Left: <span id="guesses-text">9</span></p>
+        <p>Your Guesses so far: <span id="user-text"></span></p>
+        <p>dont look! lol computer chose: <span id="computer-text"><strong>nothing</strong></span></p>
+        <p>Guess the word:<span id="word-guess-text"></span></p>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="game">
+
+</div>
+
+<script type="text/javascript">
+
+    // Creates an array that lists out all of the options (Rock, Paper, or Scissors).
+    var alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+    var computerChoices = ["monkey", "dinosaur", "ralph", "power","homework"]
+    var userChoices = [];
+    var wins = 0;
+    var lost = 0;
+    var tie = 0;
+    var numberOfGuesses = 9;
+
+    //set stuff for displaying document
+    var userText = document.getElementById("user-text");
+    var computerText = document.getElementById("computer-text");
+    var winsText = document.getElementById("wins-text");
+    var lossesText = document.getElementById("losses-text");
+    var guessesText = document.getElementById("guesses-text");
+    var wordguessText = document.getElementById("word-guess-text");
+
+
+//FUNCTIONS==========================================
+    //Test each input exist in the array
+    function checkValidInput (someArray,value) {
+      return someArray.includes(value);
+    }
+    //randomize input selection
+    function randomizeSelection(someArray) {
+      return someArray[Math.floor(Math.random() * someArray.length)];
+    }
+    //get random computer guess
+    var computerGuess = randomizeSelection(computerChoices);
+
+    //check if letter user guessed is in random selected word
+    function getWordIndicies(someArray,someLetter) {
+      var indices = [];
+      var idx = someArray.indexOf(someLetter);
+      while (idx != -1) {
+        indices.push(idx);
+        idx = someArray.indexOf(someLetter, idx + 1);
+      }
+      return indices;
+    }
+    function setBlanksOfWord(someWord) {
+      var blank = "_ ";
+      /*      wordguessText.textContent = blank.repeat(someWord.length);*/
+      for (var i = 0; i <   someWord.length; i++) {
+        var spanCreate = document.createElement("span");
+          spanCreate.innerHTML = "_ ";
+          wordguessText.append(spanCreate);
+      }
+    }
+
+    function replaceBlanksOfWord(someLetter,arrayOfIndicies) {
+      
+      for (var i = 0; i <   arrayOfIndicies.length; i++) {
+          var spanCreate = document.createElement("span");
+          spanCreate.innerHTML = someLetter + " ";
+          wordguessText.replaceChild(spanCreate,wordguessText.childNodes[arrayOfIndicies[i]])
+
+      }
+    }
+    var wordBlanks = setBlanksOfWord(computerGuess);
+    /*wordguessText.textContent = wordBlanks;*/
+    // This function is run whenever the user presses a key.
+    document.onkeyup = function(event) {
+
+      // Determines which key was pressed.
+      var userGuess = event.key;
+
+      if (checkValidInput(alphabet,userGuess)) {
+        userChoices.push(userGuess);
+        //decrease number of user guesses by 1
+        numberOfGuesses= numberOfGuesses-1;
+        // Alerts the key the user pressed (userGuess).
+        console.log("User guess: " + userGuess);
+
+        // Alerts the Computer's guess.
+        console.log("Computer guess: " + computerGuess);
+
+        // user guesses right
+          // increase win score by 1
+          // reset number of guesses to max
+          // select new computer guess
+
+          
+          var letterIndicies = getWordIndicies(computerGuess,userGuess);//get all indicies of the letters that the user guessed
+
+          //if the user guesses a correct letter (meaning the length of the returned array is not 0)
+          //reveal the letters indicies
+          if (letterIndicies.length !== 0) {
+            console.log(letterIndicies)
+            replaceBlanksOfWord(userGuess,letterIndicies);
+          }
+          if(userGuess == computerGuess) {
+            console.log("user wins!");
+            wins = wins + 1;
+            numberOfGuesses = 9;
+            computerGuess = randomizeSelection(computerChoices);
+            userChoices = [];//clear array of userChoices
+          }
+          else {
+          }
+        // user runs out of guesses
+          // increase lose score by 1
+          // reset number of guesses to max
+          // select new computer guess
+          if(numberOfGuesses==0) {
+            lost = lost + 1;
+            numberOfGuesses = 9;
+            computerGuess = randomizeSelection(computerChoices);
+            console.log(numberOfGuesses)
+            userChoices = [];//clear array of userChoices
+          }
+
+          else{
+
+          }
+          
+        // update stuff on screen
+        winsText.textContent=wins;
+        lossesText.textContent=lost;
+
+        computerText.textContent=computerGuess;
+        userText.textContent=userChoices;
+
+        guessesText.textContent=numberOfGuesses;
+
+      }
+    };
+
+  </script>
+
+</body>
+
+</html>
